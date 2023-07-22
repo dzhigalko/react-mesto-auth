@@ -1,15 +1,15 @@
 import {useEffect} from "react";
 
 export default function usePopupClose(isOpen, closePopup) {
+  const handleOverlayClick = (event) => {
+    if (event.target === event.currentTarget) {
+      closePopup()
+    }
+  }
+
   useEffect(() => {
     if (!isOpen) {
       return
-    }
-
-    const handleOverlay = (event) => {
-      if (event.target.classList.contains("popup_opened")) {
-        closePopup()
-      }
     }
 
     const handleEscape = (event) => {
@@ -19,11 +19,11 @@ export default function usePopupClose(isOpen, closePopup) {
     }
 
     document.addEventListener("keydown", handleEscape)
-    document.addEventListener("mousedown", handleOverlay)
 
     return () => {
       document.removeEventListener("keydown", handleEscape)
-      document.removeEventListener("mousedown", handleOverlay)
     }
   }, [isOpen, closePopup])
+
+  return { handleOverlayClick }
 }

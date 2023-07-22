@@ -1,14 +1,12 @@
 import {Link, useOutletContext} from "react-router-dom";
-import {useEffect, useState} from "react";
+import {useEffect} from "react";
 import authApi from "../../utils/authApi";
 import fail from "../../images/fail.svg"
 import success from "../../images/success.svg"
-import InfoTooltip from "../InfoTooltip/InfoTooltip";
 import useForm from "../../hooks/useForm";
 
 
-export default function Register() {
-  const [infoTooltip, setInfoTooltip] = useState({isOpen: false})
+export default function Register({ onError, onSuccess }) {
   const {formState, handleChange} = useForm({
     email: true,
     password: true
@@ -26,24 +24,13 @@ export default function Register() {
     e.preventDefault()
 
     authApi.signup(formState.values.email, formState.values.password).then(() => {
-      setInfoTooltip({
-        isOpen: true,
-        text: "Вы успешно зарегистрировались!",
-        icon: success
-      })
+      onSuccess(success, "Вы успешно зарегистрировались!")
     }).catch(() => {
-      setInfoTooltip({
-        isOpen: true,
-        text: "Что-то пошло не так! Попробуйте ещё раз.",
-        icon: fail
-      })
+      onError(fail, "Что-то пошло не так! Попробуйте ещё раз.")
     })
   }
 
   return (<>
-    <InfoTooltip isOpen={infoTooltip.isOpen} icon={infoTooltip.icon} text={infoTooltip.text}
-                 onClose={() => setInfoTooltip({isOpen: false})}/>
-
     <section className="login login__page">
       <h2 className="login__title">Регистрация</h2>
       <form

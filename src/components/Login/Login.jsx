@@ -1,18 +1,16 @@
-import {useEffect, useState} from "react";
+import {useEffect} from "react";
 import authApi from "../../utils/authApi";
 import {Link, useNavigate, useOutletContext} from "react-router-dom";
 import useForm from "../../hooks/useForm";
-import InfoTooltip from "../InfoTooltip/InfoTooltip";
 import fail from "../../images/fail.svg"
 
-export default function Login({onSignIn}) {
+export default function Login({onSignIn, onError}) {
   const { setMenu } = useOutletContext()
   const navigate = useNavigate()
   const {formState, handleChange} = useForm({
     email: true,
     password: true
   })
-  const [isErrorTooltopOpen, setErrorTooltipOpen] = useState(false)
 
   useEffect(() => {
     setMenu([
@@ -26,13 +24,11 @@ export default function Login({onSignIn}) {
     authApi.signin(formState.values.email, formState.values.password).then((data) => {
       onSignIn(data)
       navigate("/")
-    }).catch(() => setErrorTooltipOpen(true))
+    }).catch(() => onError(fail, "Что-то пошло не так! Попробуйте ещё раз."))
   }
 
   return (
     <>
-      <InfoTooltip isOpen={isErrorTooltopOpen} icon={fail} text="Что-то пошло не так! Попробуйте ещё раз."
-                   onClose={() => setErrorTooltipOpen(false)}/>
       <section className="login login__page">
         <h2 className="login__title">Вход</h2>
         <form
